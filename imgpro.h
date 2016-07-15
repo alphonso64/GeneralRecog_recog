@@ -5,6 +5,11 @@
 #include <curl/curl.h>
 #include <QImage>
 #include <QPainter>
+#include <dirent.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 typedef enum FTP_STATE
 {
     FTP_UPLOAD_SUCCESS,
@@ -21,6 +26,8 @@ typedef struct FTP_OPT
     char *file;     /*filepath*/
 }FTP_OPT;
 
+
+void fileSync(const char *file);
 
 void getGrayImageFromYUYV(uint8 *src,int w,int h,uint8 *dst);
 
@@ -46,7 +53,13 @@ int detectThreshold(int nMaxIter , int &nDiffRet,unsigned char *graySrc,int w,in
 
 int saveBMPFromGrayImg(const char *path,unsigned char *data,int w,int h);
 
+int saveBMPFromRGB888Img(const char *path,unsigned char *data,int w,int h);
+
+int saveYUYVImg(const char *path,unsigned char *data,int w,int h);
+
 int getIntereZone(unsigned char *data,int w,int h,int threshold,int *x,int *y,int *zoneWidthg,int *zonHeight);
+
+int downRGBBy2x2(unsigned char * recImg, unsigned char * rgbImg,int width,int height);
 
 FTP_STATE ftp_upload(const FTP_OPT ftp_option);
 

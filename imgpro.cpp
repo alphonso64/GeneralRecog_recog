@@ -23,6 +23,16 @@ void getGrayImageFromYUYV(uint8 *src,int w,int h,uint8 *dst){
     }
 }
 
+void fileSync(const char *file)
+{
+    int fd =  open( file, O_RDWR);
+    if(fd != -1)
+    {
+        syncfs(fd);
+        close(fd);
+    }
+}
+
 void convert_YUYV_to_RGB24_(int width, int height, const uint8* yuyv_image, uint8 *rgb_image){
     int y;
     int cr;
@@ -415,6 +425,72 @@ int saveBMPFromGrayImg(const char *path,unsigned char *data,int w,int h){
     return 0;
 }
 
+int saveYUYVImg(const char *path,unsigned char *data,int w,int h)
+{
+    FILE *fp = fopen(path,"wb+");
+    if(fp== NULL){
+        return -1;
+    }
+    int totalLen = w*h*2;
+    unsigned char *temp = (unsigned char*)malloc(totalLen);
+    memcpy(temp,data,totalLen);
+    fwrite(temp,1,totalLen,fp);
+    fclose(fp);
+    free(temp);
+    return 0;
+}
+
+int saveBMPFromRGB888Img(const char *path,unsigned char *data,int w,int h)
+{
+    FILE *fp = fopen(path,"wb+");
+    if(fp== NULL){
+        return -1;
+    }
+    int dibLen = 256*4;
+    int offset = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER)+dibLen;
+    int totalLen = w*h*3+offset;
+    unsigned char *temp = (unsigned char*)malloc(totalLen);
+    BITMAPFILEHEADER *header = (BITMAPFILEHEADER *)temp;
+    BITMAPINFOHEADER *info = (BITMAPINFOHEADER *)(temp+sizeof(BITMAPFILEHEADER));
+    unsigned char *dstData = (unsigned char *)(temp + offset);
+
+    header->bfOffBits = offset;
+    header->bfReserved1 =0;
+    header->bfReserved2 = 0;
+    header->bfType = 0x4D42;
+    header->bfSize = totalLen;
+
+    info->biSize = sizeof(BITMAPINFOHEADER);
+    info->biWidth = w;
+    info->biHeight = -h;
+    info->biPlanes = 1;
+    info->biBitCount = 24;
+    info->biCompression = 0;
+    info->biSizeImage = w*h*3;
+    info->biXPelsPerMeter = 0;
+    info->biYPelsPerMeter = 0;
+    info->biClrUsed = 256;
+    info->biClrImportant = 0;
+    rgb_pixel_t *rgba = (rgb_pixel_t *)(temp+sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER));
+    for(int i=0;i<256;i++){
+        rgba->alpha = 0;
+        rgba->blue = i;
+        rgba->green = i;
+        rgba->red = i;
+        rgba++;
+    }
+    memcpy(dstData,data,w*h*3);
+//    for(int i=0;i<h;i++){
+//        for(int j=0;j<w;j++){
+//            dstData[i*w+j] = data[(h-1-i)*w+j];
+//        }
+//    }
+    fwrite(temp,1,totalLen,fp);
+    fclose(fp);
+    free(temp);
+    return 0;
+}
+
 int getIntereZone(unsigned char *data,int w,int h,int threshold,int *x,int *y,int *zoneWidthg,int *zoneHeight){
     int minX = w+1;
     int minY = w+1;
@@ -579,4 +655,19 @@ FTP_STATE ftp_download(const FTP_OPT ftp_option)
     curl_exit(curl);
     fclose(fp);
     return state;
+}
+
+int downRGBBy2x2(unsigned char * recImg, unsigned char * rgbImg,int width,int height)
+{
+    int stepWidth = width/2;
+    int stepHeight = height/2;
+    for(int i=0;i<stepHeight;i++)
+    {
+        for(int j=0;j<stepWidth;j++)
+        {
+            recImg[i*stepWidth*3 +j*3] = rgbImg[i*width*6+j*6];
+            recImg[i*stepWidth*3 +j*3+1] = rgbImg[i*width*6+j*6+1];
+            recImg[i*stepWidth*3 +j*3+2] = rgbImg[i*width*6+j*6+2];
+        }
+    }
 }

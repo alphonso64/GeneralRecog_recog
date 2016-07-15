@@ -198,6 +198,7 @@ void MainWindow::on_swupdate_pushButton_clicked()
     {
         msgForm->setMsg(QString("程序更新成功,请重启机器！"));
         msgForm->show();
+        fileSync("/home/program/temp/GeneralRecog");
     }
     else
     {
