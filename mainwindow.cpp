@@ -39,6 +39,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     cleanScreen();
 
+//    ui->dataupdate_pushButton->setVisible(false);
+    ui->pushButton_12->setVisible(false);
+
+    msgForm = new MessageForm();
+    msgForm->hide();
+    msgForm->move(342,190);
+
     isTestMode = false;
     ftp.start();
 }
@@ -112,6 +119,7 @@ void MainWindow::initCam()
     irp.y = RECTANGLE_MARKER_START_Y;
     irp.step = 8;
     savenum = 0;
+    ftp.init(0);
     m_camera = new Tcamera(FRAME_WIDTH,FRAME_HEIGHT);
 }
 
@@ -182,7 +190,20 @@ void MainWindow::on_dataupdate_pushButton_clicked()
 
 void MainWindow::on_swupdate_pushButton_clicked()
 {
-
+    FTP_OPT ftp_opt;
+    ftp_opt.url = "ftp://115.29.193.236/param/rec_1/GeneralRecog";
+    ftp_opt.file = "/home/program/temp/GeneralRecog";
+    ftp_opt.user_key = "myftp:880414";
+    if(FTP_DOWNLOAD_SUCCESS == ftp_download(ftp_opt))
+    {
+        msgForm->setMsg(QString("程序更新成功,请重启机器！"));
+        msgForm->show();
+    }
+    else
+    {
+        msgForm->setMsg(QString("程序更新失败！"));
+        msgForm->show();
+    }
 }
 
 
@@ -233,6 +254,7 @@ void MainWindow::on_right_pushButton_clicked()
 
 void MainWindow::on_pushButton_12_clicked()
 {
+    ftp.stop();
     qApp->exit(0);
 }
 

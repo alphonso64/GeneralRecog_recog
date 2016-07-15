@@ -6,7 +6,7 @@
 #include "tcamera.h"
 #include "Recognizer.h"
 #include "ftpthread.h"
-
+#include "messageform.h"
 namespace Ui {
 class MainWindow;
 }
@@ -57,6 +57,7 @@ private:
     void uninitCam();
     void recog();
     time_t testmode_time;
+    MessageForm *msgForm;
 };
 
 #endif // MAINWINDOW_H

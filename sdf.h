@@ -28,7 +28,7 @@ typedef long long			int64;
 #define RECTANGLE_MARKER_START_X (FRAME_WIDTH-RECTANGLE_MARKER_WIDTH)/2
 #define RECTANGLE_MARKER_START_Y (FRAME_HEIGHT-RECTANGLE_MARKER_HEIGHT)/2
 
-#define IMAGESACEPATH "./IMG/%d__%d.bmp"
+#define IMAGESACEPATH "/home/program/IMG/%d__%d.bmp"
 
 struct imageRecParam
 {

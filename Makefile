@@ -49,15 +49,19 @@ SOURCES       = main.cpp \
 		mainwindow.cpp \
 		tcamera.cpp \
 		imgpro.cpp \
-		ftpthread.cpp moc_mainwindow.cpp \
-		moc_ftpthread.cpp
+		ftpthread.cpp \
+		messageform.cpp moc_mainwindow.cpp \
+		moc_ftpthread.cpp \
+		moc_messageform.cpp
 OBJECTS       = main.o \
 		mainwindow.o \
 		tcamera.o \
 		imgpro.o \
 		ftpthread.o \
+		messageform.o \
 		moc_mainwindow.o \
-		moc_ftpthread.o
+		moc_ftpthread.o \
+		moc_messageform.o
 DIST          = /usr/lib/arm-linux-gnueabihf/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/arm-linux-gnueabihf/qt5/mkspecs/common/shell-unix.conf \
 		/usr/lib/arm-linux-gnueabihf/qt5/mkspecs/common/unix.conf \
@@ -119,7 +123,8 @@ DIST          = /usr/lib/arm-linux-gnueabihf/qt5/mkspecs/features/spec_pre.prf \
 		mainwindow.cpp \
 		tcamera.cpp \
 		imgpro.cpp \
-		ftpthread.cpp
+		ftpthread.cpp \
+		messageform.cpp
 QMAKE_TARGET  = GeneralRecog
 DESTDIR       = #avoid trailing-slash linebreak
 TARGET        = GeneralRecog
@@ -149,7 +154,7 @@ first: all
 
 all: Makefile $(TARGET)
 
-$(TARGET): ui_mainwindow.h $(OBJECTS)  
+$(TARGET): ui_mainwindow.h ui_messageform.h $(OBJECTS)  
 	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS) $(OBJCOMP) $(LIBS)
 
 Makefile: GeneralRecog.pro /usr/lib/arm-linux-gnueabihf/qt5/mkspecs/linux-g++/qmake.conf /usr/lib/arm-linux-gnueabihf/qt5/mkspecs/features/spec_pre.prf \
@@ -282,7 +287,7 @@ qmake_all: FORCE
 
 dist: 
 	@test -d .tmp/GeneralRecog1.0.0 || mkdir -p .tmp/GeneralRecog1.0.0
-	$(COPY_FILE) --parents $(DIST) .tmp/GeneralRecog1.0.0/ && $(COPY_FILE) --parents mainwindow.h tcamera.h sdf.h imgpro.h Rbmp.h Rcomdef.h Recognizer.h ftpthread.h .tmp/GeneralRecog1.0.0/ && $(COPY_FILE) --parents main.cpp mainwindow.cpp tcamera.cpp imgpro.cpp ftpthread.cpp .tmp/GeneralRecog1.0.0/ && $(COPY_FILE) --parents mainwindow.ui .tmp/GeneralRecog1.0.0/ && (cd `dirname .tmp/GeneralRecog1.0.0` && $(TAR) GeneralRecog1.0.0.tar GeneralRecog1.0.0 && $(COMPRESS) GeneralRecog1.0.0.tar) && $(MOVE) `dirname .tmp/GeneralRecog1.0.0`/GeneralRecog1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/GeneralRecog1.0.0
+	$(COPY_FILE) --parents $(DIST) .tmp/GeneralRecog1.0.0/ && $(COPY_FILE) --parents mainwindow.h tcamera.h sdf.h imgpro.h Rbmp.h Rcomdef.h Recognizer.h ftpthread.h messageform.h .tmp/GeneralRecog1.0.0/ && $(COPY_FILE) --parents main.cpp mainwindow.cpp tcamera.cpp imgpro.cpp ftpthread.cpp messageform.cpp .tmp/GeneralRecog1.0.0/ && $(COPY_FILE) --parents mainwindow.ui messageform.ui .tmp/GeneralRecog1.0.0/ && (cd `dirname .tmp/GeneralRecog1.0.0` && $(TAR) GeneralRecog1.0.0.tar GeneralRecog1.0.0 && $(COMPRESS) GeneralRecog1.0.0.tar) && $(MOVE) `dirname .tmp/GeneralRecog1.0.0`/GeneralRecog1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/GeneralRecog1.0.0
 
 
 clean:compiler_clean 
@@ -305,28 +310,35 @@ check: first
 
 compiler_rcc_make_all:
 compiler_rcc_clean:
-compiler_moc_header_make_all: moc_mainwindow.cpp moc_ftpthread.cpp
+compiler_moc_header_make_all: moc_mainwindow.cpp moc_ftpthread.cpp moc_messageform.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_mainwindow.cpp moc_ftpthread.cpp
+	-$(DEL_FILE) moc_mainwindow.cpp moc_ftpthread.cpp moc_messageform.cpp
 moc_mainwindow.cpp: tcamera.h \
 		sdf.h \
 		Recognizer.h \
 		NetParam.h \
 		Rcomdef.h \
 		ftpthread.h \
+		messageform.h \
 		mainwindow.h
 	/usr/lib/arm-linux-gnueabihf/qt5/bin/moc $(DEFINES) -I/usr/lib/arm-linux-gnueabihf/qt5/mkspecs/linux-g++ -I/home/pi/GeneralRecog_recog -I/usr/include/arm-linux-gnueabihf/qt5 -I/usr/include/arm-linux-gnueabihf/qt5/QtWidgets -I/usr/include/arm-linux-gnueabihf/qt5/QtGui -I/usr/include/arm-linux-gnueabihf/qt5/QtCore -I/usr/include/c++/4.9 -I/usr/include/arm-linux-gnueabihf/c++/4.9 -I/usr/include/c++/4.9/backward -I/usr/lib/gcc/arm-linux-gnueabihf/4.9/include -I/usr/local/include -I/usr/lib/gcc/arm-linux-gnueabihf/4.9/include-fixed -I/usr/include/arm-linux-gnueabihf -I/usr/include mainwindow.h -o moc_mainwindow.cpp
 
 moc_ftpthread.cpp: ftpthread.h
 	/usr/lib/arm-linux-gnueabihf/qt5/bin/moc $(DEFINES) -I/usr/lib/arm-linux-gnueabihf/qt5/mkspecs/linux-g++ -I/home/pi/GeneralRecog_recog -I/usr/include/arm-linux-gnueabihf/qt5 -I/usr/include/arm-linux-gnueabihf/qt5/QtWidgets -I/usr/include/arm-linux-gnueabihf/qt5/QtGui -I/usr/include/arm-linux-gnueabihf/qt5/QtCore -I/usr/include/c++/4.9 -I/usr/include/arm-linux-gnueabihf/c++/4.9 -I/usr/include/c++/4.9/backward -I/usr/lib/gcc/arm-linux-gnueabihf/4.9/include -I/usr/local/include -I/usr/lib/gcc/arm-linux-gnueabihf/4.9/include-fixed -I/usr/include/arm-linux-gnueabihf -I/usr/include ftpthread.h -o moc_ftpthread.cpp
 
+moc_messageform.cpp: messageform.h
+	/usr/lib/arm-linux-gnueabihf/qt5/bin/moc $(DEFINES) -I/usr/lib/arm-linux-gnueabihf/qt5/mkspecs/linux-g++ -I/home/pi/GeneralRecog_recog -I/usr/include/arm-linux-gnueabihf/qt5 -I/usr/include/arm-linux-gnueabihf/qt5/QtWidgets -I/usr/include/arm-linux-gnueabihf/qt5/QtGui -I/usr/include/arm-linux-gnueabihf/qt5/QtCore -I/usr/include/c++/4.9 -I/usr/include/arm-linux-gnueabihf/c++/4.9 -I/usr/include/c++/4.9/backward -I/usr/lib/gcc/arm-linux-gnueabihf/4.9/include -I/usr/local/include -I/usr/lib/gcc/arm-linux-gnueabihf/4.9/include-fixed -I/usr/include/arm-linux-gnueabihf -I/usr/include messageform.h -o moc_messageform.cpp
+
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
-compiler_uic_make_all: ui_mainwindow.h
+compiler_uic_make_all: ui_mainwindow.h ui_messageform.h
 compiler_uic_clean:
-	-$(DEL_FILE) ui_mainwindow.h
+	-$(DEL_FILE) ui_mainwindow.h ui_messageform.h
 ui_mainwindow.h: mainwindow.ui
 	/usr/lib/arm-linux-gnueabihf/qt5/bin/uic mainwindow.ui -o ui_mainwindow.h
+
+ui_messageform.h: messageform.ui
+	/usr/lib/arm-linux-gnueabihf/qt5/bin/uic messageform.ui -o ui_messageform.h
 
 compiler_yacc_decl_make_all:
 compiler_yacc_decl_clean:
@@ -344,7 +356,8 @@ main.o: main.cpp mainwindow.h \
 		Recognizer.h \
 		NetParam.h \
 		Rcomdef.h \
-		ftpthread.h
+		ftpthread.h \
+		messageform.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
 
 mainwindow.o: mainwindow.cpp mainwindow.h \
@@ -354,6 +367,7 @@ mainwindow.o: mainwindow.cpp mainwindow.h \
 		NetParam.h \
 		Rcomdef.h \
 		ftpthread.h \
+		messageform.h \
 		ui_mainwindow.h \
 		imgpro.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o mainwindow.cpp
@@ -369,14 +383,22 @@ imgpro.o: imgpro.cpp imgpro.h \
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o imgpro.o imgpro.cpp
 
 ftpthread.o: ftpthread.cpp ftpthread.h \
-		.
+		imgpro.h \
+		sdf.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ftpthread.o ftpthread.cpp
+
+messageform.o: messageform.cpp messageform.h \
+		ui_messageform.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o messageform.o messageform.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp
 
 moc_ftpthread.o: moc_ftpthread.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_ftpthread.o moc_ftpthread.cpp
+
+moc_messageform.o: moc_messageform.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_messageform.o moc_messageform.cpp
 
 ####### Install
 

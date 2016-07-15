@@ -16,7 +16,8 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     tcamera.cpp \
     imgpro.cpp \
-    ftpthread.cpp
+    ftpthread.cpp \
+    messageform.cpp
 
 HEADERS  += mainwindow.h \
     tcamera.h \
@@ -25,6 +26,8 @@ HEADERS  += mainwindow.h \
     Rbmp.h \
     Rcomdef.h \
     Recognizer.h \
-    ftpthread.h
+    ftpthread.h \
+    messageform.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    messageform.ui
